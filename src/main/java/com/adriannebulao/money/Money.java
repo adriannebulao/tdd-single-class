@@ -9,10 +9,21 @@ class Money {
     private final boolean isNegative;
 
     Money(Currency currency, int dollars, int cents, boolean isNegative) {
+        moneyValidation(currency, dollars, cents);
         this.currency = currency;
         this.dollars = dollars;
         this.cents = cents;
         this.isNegative = isNegative;
+    }
+
+    void moneyValidation(Currency currency, int dollars, int cents) {
+        Objects.requireNonNull(currency, "currency must not be null");
+        if (dollars < 0) {
+            throw new IllegalArgumentException("dollars must be positive, was: " + dollars);
+        }
+        if (cents < 0 || cents > 99) {
+            throw new IllegalArgumentException("cents must be between 0 and 99, was: " + cents);
+        }
     }
 
     @Override
