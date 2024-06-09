@@ -85,4 +85,38 @@ class MoneyTest {
 
         assertEquals(new Money(currency, expectedDollars, expectedCents, expectedIsNegative), actual);
     }
+
+    @ParameterizedTest
+    @CsvSource({
+            "PHP, 1, 50, false, USD, 4, 20, false",
+            "PHP, 1, 50, false, EUR, 4, 20, true",
+            "USD, 1, 50, true, EUR, 4, 20, false",
+            "USD, 1, 50, true, PHP, 4, 20, true",
+            "EUR, 1, 50, false, PHP, 4, 20, false",
+            "EUR, 1, 50, true, USD, 4, 20, true",
+    })
+    void add_money_different_currency(Currency currency1, int dollars1, int cents1, boolean isNegative1,
+                                      Currency currency2, int dollars2, int cents2, boolean isNegative2) {
+        Money value1 = new Money(currency1, dollars1, cents1, isNegative1);
+        Money value2 = new Money(currency2, dollars2, cents2, isNegative2);
+
+        assertThrows(CurrencyMismatchException.class, () -> value1.plus(value2));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "PHP, 1, 50, false, USD, 4, 20, false",
+            "PHP, 1, 50, false, EUR, 4, 20, true",
+            "USD, 1, 50, true, EUR, 4, 20, false",
+            "USD, 1, 50, true, PHP, 4, 20, true",
+            "EUR, 1, 50, false, PHP, 4, 20, false",
+            "EUR, 1, 50, true, USD, 4, 20, true",
+    })
+    void subtract_money_different_currency(Currency currency1, int dollars1, int cents1, boolean isNegative1,
+                                      Currency currency2, int dollars2, int cents2, boolean isNegative2) {
+        Money value1 = new Money(currency1, dollars1, cents1, isNegative1);
+        Money value2 = new Money(currency2, dollars2, cents2, isNegative2);
+
+        assertThrows(CurrencyMismatchException.class, () -> value1.minus(value2));
+    }
 }
