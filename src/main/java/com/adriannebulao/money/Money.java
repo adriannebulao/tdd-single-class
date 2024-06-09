@@ -80,7 +80,20 @@ class Money {
 
     @Override
     public String toString() {
-        return currency + " " + dollars + "." + cents;
+        StringBuilder centString = new StringBuilder(currency + " ");
+        if (isNegative) {
+            centString.append("-").append(dollars);
+        } else {
+            centString.append(dollars);
+        }
+        centString.append(".");
+        if (cents < 10) {
+            centString.append(0).append(cents);
+        } else {
+            centString.append(cents);
+        }
+
+        return centString.toString();
     }
 }
 

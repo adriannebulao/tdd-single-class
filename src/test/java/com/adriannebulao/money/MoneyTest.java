@@ -55,4 +55,19 @@ class MoneyTest {
 
         assertEquals(new Money(currency, expectedDollars, expectedCents, expectedIsNegative), actual);
     }
+
+    @ParameterizedTest
+    @CsvSource({
+            "PHP, 1, 50, false, PHP 1.50",
+            "PHP, 1, 50, true, PHP -1.50",
+            "USD, 1, 5, false, USD 1.05",
+            "USD, 1, 5, true, USD -1.05",
+            "EUR, 0, 5, false, EUR 0.05",
+            "EUR, 0, 5, true, EUR -0.05",
+    })
+    void to_string_proper_format(Currency currency, int dollars, int cents, boolean isNegative, String expected) {
+        Money money = new Money(currency, dollars, cents, isNegative);
+        String actual = money.toString();
+        assertEquals(expected, actual);
+    }
 }
