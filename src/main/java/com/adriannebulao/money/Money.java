@@ -28,6 +28,7 @@ class Money {
             totalCents = this.cents + otherMoney.cents;
             isTotalNegative = this.isNegative;
             totalDollars += totalCents / 100;
+            totalCents = Math.abs(totalCents % 100);
         } else {
             int dollars1 = this.isNegative
                     ? -(this.dollars)
@@ -41,6 +42,7 @@ class Money {
                     : this.cents - otherMoney.cents;
             isTotalNegative = totalDollars < 0;
             if (totalCents < 0) {
+                totalCents += 100;
                 if (isTotalNegative) {
                     ++totalDollars;
                 } else {
@@ -48,8 +50,11 @@ class Money {
                 }
             }
         }
-        totalCents = Math.abs(totalCents % 100);
         return new Money(currency, totalDollars, totalCents, isTotalNegative);
+    }
+
+    Money minus(Money otherMoney) {
+        return plus(new Money(otherMoney.currency, otherMoney.dollars, otherMoney.cents, !otherMoney.isNegative));
     }
 
     void moneyValidation(Currency currency, int cents) {

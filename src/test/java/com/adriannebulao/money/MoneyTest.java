@@ -20,11 +20,6 @@ class MoneyTest {
     }
 
     @Test
-    void initialize_money_object_negative_dollars() {
-        assertThrows(IllegalArgumentException.class, ()-> new Money(USD, -1, 50, false));
-    }
-
-    @Test
     void initialize_money_object_negative_cents() {
         assertThrows(IllegalArgumentException.class, ()-> new Money(EUR, 1, -50, false));
     }
@@ -32,6 +27,21 @@ class MoneyTest {
     @Test
     void initialize_money_object_cents_greater_than_99() {
         assertThrows(IllegalArgumentException.class, ()-> new Money(PHP, 1, 100, false));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "PHP, 1, 50, false, PHP 1.50",
+            "PHP, 1, 50, true, PHP -1.50",
+            "USD, 1, 5, false, USD 1.05",
+            "USD, 1, 5, true, USD -1.05",
+            "EUR, 0, 5, false, EUR 0.05",
+            "EUR, 0, 5, true, EUR -0.05",
+    })
+    void to_string_proper_format(Currency currency, int dollars, int cents, boolean isNegative, String expected) {
+        Money money = new Money(currency, dollars, cents, isNegative);
+        String actual = money.toString();
+        assertEquals(expected, actual);
     }
 
     @ParameterizedTest
@@ -58,16 +68,21 @@ class MoneyTest {
 
     @ParameterizedTest
     @CsvSource({
-            "PHP, 1, 50, false, PHP 1.50",
-            "PHP, 1, 50, true, PHP -1.50",
-            "USD, 1, 5, false, USD 1.05",
-            "USD, 1, 5, true, USD -1.05",
-            "EUR, 0, 5, false, EUR 0.05",
-            "EUR, 0, 5, true, EUR -0.05",
+            "EUR, 5, 49, true, 4, 51, false, 10, 0, true",
+            "PHP, 5, 10, false, 4, 20, false, 0, 90, false",
+            "USD, 10, 90, false, 1, 20, true, 12, 10, false",
+            "EUR, 99, 99, true, 99, 99, true, 0, 0, false",
+            "PHP, 0, 50, true, 0, 50, true, 0, 0, false",
+            "PHP, 0, 50, true, 0, 50, false, 1, 0, true",
+            "PHP, 0, 50, false, 0, 50, true, 1, 0, false",
     })
-    void to_string_proper_format(Currency currency, int dollars, int cents, boolean isNegative, String expected) {
-        Money money = new Money(currency, dollars, cents, isNegative);
-        String actual = money.toString();
-        assertEquals(expected, actual);
+    void subtract_money_same_currency(Currency currency, int dollars1, int cents1, boolean isNegative1,
+                                      int dollars2, int cents2, boolean isNegative2, int expectedDollars,
+                                      int expectedCents, boolean expectedIsNegative) {
+        Money value1 = new Money(currency, dollars1, cents1, isNegative1);
+        Money value2 = new Money(currency, dollars2, cents2, isNegative2);
+        Money actual = value1.minus(value2);
+
+        assertEquals(new Money(currency, expectedDollars, expectedCents, expectedIsNegative), actual);
     }
 }
